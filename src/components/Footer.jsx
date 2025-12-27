@@ -58,10 +58,8 @@ const Footer = () => {
         
         <div className="footer-bottom">
           <p>
-            &copy; {currentYear} Aleena Mariya Rajan. All rights reserved.
-            <span className="made-with">
-              Made with <FaHeart className="heart-icon" /> using React
-            </span>
+            &copy; {} Aleena Mariya Rajan. All rights reserved.
+            
           </p>
         </div>
       </div>

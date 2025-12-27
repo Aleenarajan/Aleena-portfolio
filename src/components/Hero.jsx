@@ -1,114 +1,158 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Hero = () => {
-  const handleDownloadResume = () => {
-    const resumeUrl = '/resume.pdf';
-    const link = document.createElement('a');
-    link.href = resumeUrl;
-    link.download = 'Aleena_Mariya_Rajan_Resume.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  const handleDownloadResume = async () => {
+    try {
+      setIsDownloading(true);
+      const resumeUrl = '/resume.pdf';
+      const response = await fetch(resumeUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Aleena_Mariya_Rajan_Resume.pdf';
+      link.setAttribute('aria-label', 'Download resume PDF file');
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Failed to download resume. Please try again.');
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
-  // Skills data - positioned at different angles around the circle
-  const skills = [
-    { name: 'React', color: '#61dafb', textColor: '#000', angle: 0, distance: 200 }, // Top
-    { name: 'Node.js', color: '#68a063', textColor: '#fff', angle: 45, distance: 200 }, // Top-Right
-    { name: 'ENG', color: '#8b5cf6', textColor: '#fff', angle: 90, distance: 200 }, // Right
-    { name: 'Python', color: '#3776ab', textColor: '#fff', angle: 135, distance: 200 }, // Bottom-Right
-    { name: 'Flask', color: '#000000', textColor: '#fff', angle: 180, distance: 200 }, // Bottom
-    { name: 'TensorFlow', color: '#ff6f00', textColor: '#fff', angle: 225, distance: 200 }, // Bottom-Left
-    { name: 'AI/ML', color: '#ff6b6b', textColor: '#fff', angle: 270, distance: 200 }, // Left
-    { name: 'JavaScript', color: '#f7df1e', textColor: '#000', angle: 315, distance: 200 }, // Top-Left
+  const techSkills = [
+    { name: 'React', icon: '⚛️', color: '#61DAFB', bg: '#61DAFB' },
+    { name: 'Node.js', icon: '🟢', color: '#68A063', bg: '#68A063' },
+    { name: 'Python', icon: '🐍', color: '#3776AB', bg: '#3776AB' },
+    { name: 'AI/ML', icon: '🧠', color: '#FF6B8B', bg: '#FF6B8B' },
+    { name: 'TensorFlow', icon: '🤖', color: '#FF6F00', bg: '#FF6F00' },
+    { name: 'Flask', icon: '⚗️', color: '#000000', bg: '#000000' },
+    { name: 'MongoDB', icon: '🍃', color: '#47A248', bg: '#47A248' },
+    { name: 'JavaScript', icon: '📜', color: '#F7DF1E', bg: '#F7DF1E' },
   ];
 
-  // Function to calculate skill position
-  const getSkillPosition = (angle, distance) => {
-    const angleInRadians = (angle * Math.PI) / 180;
-    const x = Math.cos(angleInRadians) * distance;
-    const y = Math.sin(angleInRadians) * distance;
-    return { x, y };
-  };
+  // Simple fixed positions for tech badges
+  const orbitPositions = [
+    { top: '10%', left: '50%' },    // Top
+    { top: '25%', left: '75%' },    // Top right
+    { top: '50%', left: '85%' },    // Right
+    { top: '75%', left: '75%' },    // Bottom right
+    { top: '90%', left: '50%' },    // Bottom
+    { top: '75%', left: '25%' },    // Bottom left
+    { top: '50%', left: '15%' },    // Left
+    { top: '25%', left: '25%' },    // Top left
+  ];
 
   return (
-    <section id="home" className="hero">
+    <section id="home" className="hero" aria-label="Hero section">
       <div className="container">
-        <div className="hero-content">
-          <div className="hero-text">
-            <h4 className="hero-greeting fade-in-up">Hi, I'm</h4>
-            <h1 className="hero-title">
-              <span className="highlight">Aleena Mariya Rajan</span>
-            </h1>
-            <h2 className="hero-subtitle fade-in-up">
-              Full Stack Developer
-            </h2>
-            <p className="hero-description fade-in-up">
-              Full Stack Developer crafting modern, responsive web apps with clean UI and 
-              logical solutions. I build innovative applications using cutting-edge technologies.
-            </p>
-            
-            <div className="hero-buttons fade-in-up">
-              <a href="#contact" className="btn btn-primary">Get In Touch</a>
-              <button className="btn btn-outline" onClick={handleDownloadResume}>
-                📄 Download Resume
-              </button>
-            </div>
-            
-            <div className="hero-stats fade-in-up">
-              <div className="stat-item">
-                <div className="stat-number">3+</div>
-                <div className="stat-label">Projects Completed</div>
+        <div className="hero-grid">
+          {/* Left Column - Text Content */}
+          <div className="hero-left">
+            <div className="hero-text">
+              <h1 className="hero-title">
+                <span className="title-line">Aleena</span>
+                <span className="title-line name-line">
+                  <span className="name-part">Mariya</span>
+                  <span className="name-part">Rajan</span>
+                </span>
+              </h1>
+
+              <div className="title-badges">
+                <div className="title-badge">
+                  <h3 className="badge-title">Full Stack</h3>
+                  <p className="badge-subtitle">Developer</p>
+                </div>
+                <div className="title-badge">
+                  <h3 className="badge-title">AI/ML</h3>
+                  <p className="badge-subtitle">Engineer</p>
+                </div>
+              </div>
+
+              <div className="hero-description">
+                <p>
+                  I create <span className="highlight">digital experiences</span> that blend 
+                  cutting-edge technology with beautiful design. 
+                  Passionate about building innovative solutions using 
+                  <span className="highlight"> React</span>, 
+                  <span className="highlight"> Python</span>, and 
+                  <span className="highlight"> AI/ML</span>.
+                </p>
+              </div>
+
+              <div className="hero-actions">
+                <a href="#projects" className="btn btn-primary">
+                  <span className="btn-icon">👁️</span>
+                  <span className="btn-text">View My Work</span>
+                </a>
+                <button 
+                  className="btn btn-secondary"
+                  onClick={handleDownloadResume}
+                  disabled={isDownloading}
+                >
+                  <span className="btn-icon">📄</span>
+                  <span className="btn-text">
+                    {isDownloading ? 'Downloading...' : 'Download Resume'}
+                  </span>
+                </button>
               </div>
             </div>
           </div>
-          
-          <div className="hero-visual">
+
+          {/* Right Column - Visual Section */}
+          <div className="hero-right">
             <div className="visual-container">
-              {/* Photo container */}
-              <div className="photo-container">
-                <img 
-                  src="/aleena-photo.jpg" 
-                  alt="Aleena Mariya Rajan" 
-                  className="profile-image"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='90' fill='%236366f1'/%3E%3Ctext x='100' y='110' font-size='50' text-anchor='middle' fill='white' font-family='Arial'%3EA%3C/text%3E%3C/svg%3E";
-                  }}
-                />
-              </div>
-              
-              {/* Skills orbiting around the photo - WIDELY SPREAD */}
-              <div className="tech-orbits">
-                {skills.map((skill, index) => {
-                  const position = getSkillPosition(skill.angle, skill.distance);
-                  
-                  return (
-                    <div 
-                      key={index}
-                      className="tech-tag"
-                      style={{
-                        backgroundColor: skill.color,
-                        color: skill.textColor,
-                        '--angle': `${skill.angle}deg`,
-                        '--distance': `${skill.distance}px`,
-                        '--delay': `${index * 0.2}s`,
-                        '--x-pos': `${position.x}px`,
-                        '--y-pos': `${position.y}px`,
-                        left: `calc(50% + ${position.x}px)`,
-                        top: `calc(50% + ${position.y}px)`,
-                        transform: 'translate(-50%, -50%)',
-                      }}
-                    >
-                      {skill.name}
+              {/* Central Photo Circle */}
+              <div className="photo-circle">
+                <div className="photo-wrapper">
+                  <img 
+                    src="/aleena-photo.jpg" 
+                    alt="Aleena Mariya Rajan"
+                    className="profile-photo"
+                    loading="lazy"
+                    onError={(e) => {
+                      setImageError(true);
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                  {imageError && (
+                    <div className="photo-fallback">
+                      <span className="fallback-text">AM</span>
                     </div>
-                  );
-                })}
+                  )}
+                </div>
+              </div>
+
+              {/* Tech Badges - Static positioned around */}
+              <div className="tech-orbit">
+                {techSkills.map((tech, index) => (
+                  <div 
+                    key={index}
+                    className="tech-badge"
+                    style={{
+                      ...orbitPositions[index],
+                      '--delay': `${index * 0.2}s`,
+                      '--tech-color': tech.color,
+                      '--tech-bg': tech.bg + '40',
+                      borderColor: tech.bg,
+                    }}
+                  >
+                    <span className="tech-icon">{tech.icon}</span>
+                    <span className="tech-name">{tech.name}</span>
+                  </div>
+                ))}
                 
-                {/* Orbit circles */}
-                <div className="orbit-circle orbit-1"></div>
-                <div className="orbit-circle orbit-2"></div>
-                <div className="orbit-circle orbit-3"></div>
+                {/* Orbit Circles */}
+                <div className="orbit-ring ring-1"></div>
+                <div className="orbit-ring ring-2"></div>
+                <div className="orbit-ring ring-3"></div>
               </div>
             </div>
           </div>
@@ -117,15 +161,15 @@ const Hero = () => {
       
       <style jsx>{`
         .hero {
-          padding: 120px 0 80px;
-          background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
           min-height: 100vh;
           display: flex;
           align-items: center;
+          padding: 120px 0 60px;
+          background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
           position: relative;
           overflow: hidden;
         }
-        
+
         .hero::before {
           content: '';
           position: absolute;
@@ -134,200 +178,233 @@ const Hero = () => {
           right: 0;
           bottom: 0;
           background: 
-            radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(14, 165, 233, 0.1) 0%, transparent 50%);
+            radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
           pointer-events: none;
         }
-        
-        .hero-content {
+
+        .hero-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 60px;
+          gap: 80px;
           align-items: center;
-          position: relative;
-          z-index: 1;
+          max-width: 1400px;
+          margin: 0 auto;
         }
-        
-        .hero-text {
-          max-width: 600px;
+
+        /* Left Column - Text */
+        .hero-left {
+          z-index: 2;
         }
-        
-        .hero-greeting {
-          font-size: 1.5rem;
-          color: #6366f1;
-          font-weight: 500;
-          margin-bottom: 10px;
-          opacity: 0;
-          animation: fadeInUp 0.8s ease forwards;
-          animation-delay: 0.2s;
-        }
-        
+
         .hero-title {
-          font-family: 'Poppins', sans-serif;
-          font-size: 3.5rem;
-          font-weight: 700;
-          line-height: 1.2;
-          margin-bottom: 15px;
-          color: #0f172a;
-        }
-        
-        .hero-title .highlight {
-          background: linear-gradient(135deg, #6366f1, #0ea5e9);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          display: inline-block;
-        }
-        
-        .hero-subtitle {
-          font-size: 1.8rem;
-          color: #1e293b;
-          margin-bottom: 25px;
-          font-weight: 600;
-          opacity: 0;
-          animation: fadeInUp 0.8s ease forwards;
-          animation-delay: 0.4s;
-        }
-        
-        .hero-description {
-          font-size: 1.2rem;
-          color: #64748b;
-          margin-bottom: 30px;
-          line-height: 1.8;
-          opacity: 0;
-          animation: fadeInUp 0.8s ease forwards;
-          animation-delay: 0.6s;
-        }
-        
-        .hero-buttons {
-          display: flex;
-          gap: 15px;
-          flex-wrap: wrap;
           margin-bottom: 40px;
-          opacity: 0;
-          animation: fadeInUp 0.8s ease forwards;
-          animation-delay: 0.8s;
         }
-        
-        .btn {
-          padding: 12px 28px;
-          border: none;
-          border-radius: 8px;
-          font-size: 1rem;
-          font-weight: 600;
-          cursor: pointer;
-          text-decoration: none;
-          display: inline-block;
-          transition: all 0.3s ease;
-        }
-        
-        .btn-primary {
-          background: #6366f1;
+
+        .title-line {
+          display: block;
+          font-family: 'Poppins', sans-serif;
           color: white;
         }
-        
-        .btn-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
-          background: #4f46e5;
+
+        .title-line:first-child {
+          font-size: 5rem;
+          font-weight: 800;
+          background: linear-gradient(90deg, #6366f1, #8b5cf6);
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          line-height: 1;
+          margin-bottom: 10px;
         }
-        
-        .btn-secondary {
-          background: #10b981;
-          color: white;
-        }
-        
-        .btn-secondary:hover {
-          background: #0da271;
-          transform: translateY(-2px);
-          box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
-        }
-        
-        .btn-outline {
-          background: transparent;
-          border: 2px solid #6366f1;
-          color: #6366f1;
+
+        .name-line {
           display: flex;
+          gap: 20px;
           align-items: center;
-          gap: 8px;
+          font-size: 3.5rem;
+          font-weight: 600;
+          line-height: 1.2;
         }
-        
-        .btn-outline:hover {
-          background: rgba(99, 102, 241, 0.1);
-          transform: translateY(-2px);
+
+        .name-part {
+          display: inline-block;
         }
-        
-        .hero-stats {
+
+        .name-part:first-child {
+          color: #a5b4fc;
+          font-weight: 500;
+        }
+
+        .name-part:last-child {
+          color: #06b6d4;
+          font-weight: 600;
+        }
+
+        .title-badges {
           display: flex;
           gap: 30px;
-          opacity: 0;
-          animation: fadeInUp 0.8s ease forwards;
-          animation-delay: 1s;
+          margin-bottom: 40px;
         }
-        
-        .stat-item {
-          text-align: center;
+
+        .title-badge {
+          padding: 25px 35px;
+          border-radius: 20px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          min-width: 220px;
+          transition: all 0.3s ease;
         }
-        
-        .stat-number {
-          font-size: 2.2rem;
+
+        .title-badge:hover {
+          transform: translateY(-5px);
+          border-color: rgba(255, 255, 255, 0.2);
+          background: rgba(255, 255, 255, 0.08);
+          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge-title {
+          font-size: 2rem;
           font-weight: 700;
-          color: #6366f1;
-          margin-bottom: 5px;
+          color: white;
+          margin: 0 0 5px 0;
           font-family: 'Poppins', sans-serif;
         }
-        
-        .stat-label {
-          font-size: 0.9rem;
-          color: #64748b;
+
+        .badge-subtitle {
+          font-size: 1.3rem;
+          color: #94a3b8;
+          margin: 0;
           font-weight: 500;
         }
-        
-        .hero-visual {
-          position: relative;
+
+        .hero-description {
+          margin-bottom: 50px;
+          max-width: 600px;
+        }
+
+        .hero-description p {
+          font-size: 1.3rem;
+          line-height: 1.8;
+          color: #e2e8f0;
+          margin: 0;
+        }
+
+        .highlight {
+          color: #06b6d4;
+          font-weight: 600;
+          padding: 0 3px;
+        }
+
+        .hero-actions {
+          display: flex;
+          gap: 20px;
+          flex-wrap: wrap;
+        }
+
+        .btn {
+          padding: 18px 36px;
+          border-radius: 12px;
+          font-size: 1.1rem;
+          font-weight: 600;
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          text-decoration: none;
+          min-width: 220px;
+        }
+
+        .btn-primary {
+          background: linear-gradient(135deg, #6366f1, #8b5cf6);
+          color: white;
+          box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+          background: rgba(255, 255, 255, 0.08);
+          color: white;
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+          background: rgba(255, 255, 255, 0.15);
+          border-color: rgba(255, 255, 255, 0.3);
+          transform: translateY(-5px);
+        }
+
+        /* Right Column - Visual */
+        .hero-right {
           display: flex;
           justify-content: center;
           align-items: center;
-          height: 500px;
+          position: relative;
+          height: 100%;
+          min-height: 500px;
         }
-        
+
         .visual-container {
           position: relative;
-          width: 450px;
-          height: 450px;
+          width: 500px;
+          height: 500px;
           display: flex;
           justify-content: center;
           align-items: center;
         }
-        
-        /* Photo Container */
-        .photo-container {
+
+        .photo-circle {
           position: absolute;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          width: 180px;
-          height: 180px;
+          z-index: 10;
+        }
+
+        .photo-wrapper {
+          width: 250px;
+          height: 250px;
           border-radius: 50%;
           overflow: hidden;
-          border: 6px solid white;
+          border: 5px solid rgba(255, 255, 255, 0.1);
+          background: linear-gradient(135deg, #6366f1, #06b6d4);
           box-shadow: 
-            0 20px 40px rgba(99, 102, 241, 0.3),
-            inset 0 10px 20px rgba(255, 255, 255, 0.2);
-          z-index: 10;
-          background: #f1f5f9;
-          animation: pulse 4s ease-in-out infinite;
+            0 0 60px rgba(99, 102, 241, 0.4),
+            0 0 120px rgba(6, 182, 212, 0.2),
+            inset 0 0 20px rgba(255, 255, 255, 0.1);
         }
-        
-        .profile-image {
+
+        .profile-photo {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          display: block;
         }
-        
-        /* Skills Orbits - WIDELY SPREAD */
-        .tech-orbits {
+
+        .photo-fallback {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .fallback-text {
+          font-size: 4rem;
+          font-weight: 800;
+          color: white;
+          font-family: 'Poppins', sans-serif;
+        }
+
+        /* Tech Orbit */
+        .tech-orbit {
           position: absolute;
           top: 50%;
           left: 50%;
@@ -335,92 +412,92 @@ const Hero = () => {
           width: 100%;
           height: 100%;
         }
-        
-        .tech-tag {
+
+        .tech-badge {
           position: absolute;
-          padding: 10px 20px;
-          border-radius: 10px;
-          font-weight: 600;
-          font-size: 0.9rem;
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-          z-index: 5;
-          white-space: nowrap;
-          animation: float 3s ease-in-out infinite;
-          animation-delay: var(--delay);
-          border: 2px solid white;
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background: var(--tech-bg);
+          border: 2px solid;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
           transform: translate(-50%, -50%);
-          /* Individual positioning via inline styles */
+          animation: float-badge 3s ease-in-out infinite;
+          animation-delay: var(--delay);
+          box-shadow: 
+            0 8px 25px rgba(0, 0, 0, 0.3),
+            0 0 20px var(--tech-color) inset;
+          transition: all 0.3s ease;
+          z-index: 5;
         }
-        
-        /* Hover effects for skills */
-        .tech-tag:hover {
-          transform: translate(-50%, -50%) scale(1.1);
-          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
-          z-index: 20;
+
+        .tech-badge:hover {
+          transform: translate(-50%, -50%) scale(1.15);
+          box-shadow: 
+            0 12px 35px rgba(0, 0, 0, 0.4),
+            0 0 30px var(--tech-color) inset;
+          z-index: 15;
         }
-        
-        /* Orbit circles - more circles for better visual */
-        .orbit-circle {
+
+        .tech-icon {
+          font-size: 1.8rem;
+          margin-bottom: 5px;
+        }
+
+        .tech-name {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: white;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Orbit Rings */
+        .orbit-ring {
           position: absolute;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
           border-radius: 50%;
-          border: 1px dashed rgba(99, 102, 241, 0.2);
-          animation: rotateOrbit linear infinite;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          animation: rotate-ring linear infinite;
+          pointer-events: none;
         }
-        
-        .orbit-1 {
+
+        .ring-1 {
           width: 350px;
           height: 350px;
           animation-duration: 30s;
         }
-        
-        .orbit-2 {
-          width: 400px;
-          height: 400px;
+
+        .ring-2 {
+          width: 420px;
+          height: 420px;
           animation-duration: 40s;
           animation-direction: reverse;
+          border-color: rgba(255, 255, 255, 0.08);
         }
-        
-        .orbit-3 {
-          width: 300px;
-          height: 300px;
-          animation-duration: 25s;
-          border-style: dotted;
-          border-color: rgba(14, 165, 233, 0.2);
+
+        .ring-3 {
+          width: 480px;
+          height: 480px;
+          animation-duration: 50s;
+          border-color: rgba(255, 255, 255, 0.05);
         }
-        
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        @keyframes pulse {
-          0%, 100% {
-            transform: translate(-50%, -50%) scale(1);
-          }
-          50% {
-            transform: translate(-50%, -50%) scale(1.05);
-          }
-        }
-        
-        @keyframes float {
+
+        /* Animations */
+        @keyframes float-badge {
           0%, 100% {
             transform: translate(-50%, -50%);
           }
           50% {
-            transform: translate(-50%, calc(-50% - 8px));
+            transform: translate(-50%, calc(-50% - 15px));
           }
         }
-        
-        @keyframes rotateOrbit {
+
+        @keyframes rotate-ring {
           from {
             transform: translate(-50%, -50%) rotate(0deg);
           }
@@ -428,246 +505,237 @@ const Hero = () => {
             transform: translate(-50%, -50%) rotate(360deg);
           }
         }
-        
-        /* Responsive styles */
+
+        /* Responsive Design */
         @media (max-width: 1200px) {
-          .hero-content {
-            gap: 40px;
+          .hero-grid {
+            gap: 60px;
+          }
+          
+          .title-line:first-child {
+            font-size: 4rem;
+          }
+          
+          .name-line {
+            font-size: 3rem;
+          }
+          
+          .visual-container {
+            width: 450px;
+            height: 450px;
+          }
+          
+          .photo-wrapper {
+            width: 220px;
+            height: 220px;
+          }
+          
+          .tech-badge {
+            width: 70px;
+            height: 70px;
+          }
+        }
+
+        @media (max-width: 992px) {
+          .hero-grid {
+            grid-template-columns: 1fr;
+            text-align: center;
+            gap: 60px;
+          }
+          
+          .hero-left {
+            order: 2;
+          }
+          
+          .hero-right {
+            order: 1;
+            min-height: 400px;
+          }
+          
+          .name-line {
+            justify-content: center;
+          }
+          
+          .title-badges {
+            justify-content: center;
+          }
+          
+          .hero-description {
+            margin: 0 auto 40px;
+          }
+          
+          .hero-actions {
+            justify-content: center;
           }
           
           .visual-container {
             width: 400px;
             height: 400px;
           }
-          
-          .photo-container {
-            width: 160px;
-            height: 160px;
-          }
-          
-          .orbit-1 {
-            width: 320px;
-            height: 320px;
-          }
-          
-          .orbit-2 {
-            width: 370px;
-            height: 370px;
-          }
-          
-          .orbit-3 {
-            width: 280px;
-            height: 280px;
-          }
-          
-          .tech-tag {
-            padding: 8px 16px;
-            font-size: 0.85rem;
-          }
         }
-        
-        @media (max-width: 992px) {
-          .hero-content {
-            grid-template-columns: 1fr;
-            text-align: center;
-            gap: 60px;
-          }
-          
-          .hero-title {
-            font-size: 3rem;
-          }
-          
-          .hero-subtitle {
-            font-size: 1.5rem;
-          }
-          
-          .hero-buttons {
-            justify-content: center;
-          }
-          
-          .hero-stats {
-            justify-content: center;
-          }
-          
-          .visual-container {
-            width: 450px;
-            height: 450px;
-            margin: 0 auto;
-          }
-          
-          .hero-visual {
-            height: 500px;
-          }
-        }
-        
+
         @media (max-width: 768px) {
           .hero {
-            padding: 100px 0 60px;
+            padding: 100px 0 40px;
           }
           
-          .hero-buttons {
-            flex-direction: column;
-            align-items: center;
+          .title-line:first-child {
+            font-size: 3.5rem;
           }
           
-          .hero-buttons .btn {
-            width: 100%;
-            max-width: 250px;
+          .name-line {
+            font-size: 2.5rem;
           }
           
-          .hero-stats {
-            gap: 20px;
+          .title-badge {
+            padding: 20px 30px;
+            min-width: 200px;
           }
           
-          .stat-number {
+          .badge-title {
             font-size: 1.8rem;
           }
           
+          .hero-description p {
+            font-size: 1.2rem;
+          }
+          
+          .btn {
+            padding: 16px 30px;
+            min-width: 200px;
+          }
+          
           .visual-container {
-            width: 380px;
-            height: 380px;
+            width: 350px;
+            height: 350px;
           }
           
-          .photo-container {
-            width: 150px;
-            height: 150px;
+          .photo-wrapper {
+            width: 180px;
+            height: 180px;
           }
           
-          .tech-tag {
-            padding: 7px 14px;
-            font-size: 0.8rem;
+          .tech-badge {
+            width: 60px;
+            height: 60px;
           }
           
-          .orbit-1 {
+          .tech-icon {
+            font-size: 1.5rem;
+          }
+          
+          .tech-name {
+            font-size: 0.7rem;
+          }
+          
+          .ring-1 {
             width: 280px;
             height: 280px;
           }
           
-          .orbit-2 {
+          .ring-2 {
             width: 330px;
             height: 330px;
           }
           
-          .orbit-3 {
-            width: 250px;
-            height: 250px;
+          .ring-3 {
+            width: 380px;
+            height: 380px;
           }
         }
-        
+
         @media (max-width: 576px) {
-          .hero-title {
-            font-size: 2.5rem;
+          .title-line:first-child {
+            font-size: 3rem;
           }
           
-          .hero-subtitle {
-            font-size: 1.3rem;
+          .name-line {
+            font-size: 2rem;
+            flex-direction: column;
+            gap: 10px;
           }
           
-          .hero-description {
-            font-size: 1.1rem;
+          .title-badges {
+            flex-direction: column;
+            align-items: center;
+          }
+          
+          .title-badge {
+            width: 100%;
+            max-width: 250px;
+          }
+          
+          .hero-actions {
+            flex-direction: column;
+            align-items: center;
+          }
+          
+          .btn {
+            width: 100%;
+            max-width: 300px;
+            justify-content: center;
           }
           
           .visual-container {
-            width: 320px;
-            height: 320px;
+            width: 300px;
+            height: 300px;
           }
           
-          .photo-container {
+          .photo-wrapper {
+            width: 150px;
+            height: 150px;
+          }
+          
+          .tech-badge {
+            width: 50px;
+            height: 50px;
+          }
+          
+          .tech-icon {
+            font-size: 1.2rem;
+          }
+          
+          .tech-name {
+            font-size: 0.6rem;
+          }
+          
+          .ring-1 {
+            width: 220px;
+            height: 220px;
+          }
+          
+          .ring-2 {
+            width: 260px;
+            height: 260px;
+          }
+          
+          .ring-3 {
+            width: 300px;
+            height: 300px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .title-line:first-child {
+            font-size: 2.5rem;
+          }
+          
+          .name-line {
+            font-size: 1.8rem;
+          }
+          
+          .visual-container {
+            width: 280px;
+            height: 280px;
+          }
+          
+          .photo-wrapper {
             width: 130px;
             height: 130px;
           }
           
-          .orbit-1 {
-            width: 240px;
-            height: 240px;
-          }
-          
-          .orbit-2 {
-            width: 280px;
-            height: 280px;
-          }
-          
-          .orbit-3 {
-            width: 220px;
-            height: 220px;
-          }
-          
-          .tech-tag {
-            padding: 6px 12px;
-            font-size: 0.75rem;
-          }
-        }
-        
-        @media (max-width: 480px) {
-          .hero {
-            padding: 80px 0 40px;
-          }
-          
-          .visual-container {
-            width: 280px;
-            height: 280px;
-          }
-          
-          .hero-visual {
-            height: 400px;
-          }
-          
-          .photo-container {
-            width: 110px;
-            height: 110px;
-            border-width: 4px;
-          }
-          
-          .orbit-1 {
-            width: 200px;
-            height: 200px;
-          }
-          
-          .orbit-2 {
-            width: 240px;
-            height: 240px;
-          }
-          
-          .orbit-3 {
-            width: 180px;
-            height: 180px;
-          }
-          
-          /* Reduce number of skills on very small screens */
-          .tech-tag:nth-child(n+5) {
-            display: none;
-          }
-        }
-        
-        @media (max-width: 360px) {
-          .visual-container {
-            width: 250px;
-            height: 250px;
-          }
-          
-          .photo-container {
-            width: 100px;
-            height: 100px;
-          }
-          
-          .orbit-1 {
-            width: 180px;
-            height: 180px;
-          }
-          
-          .orbit-2 {
-            width: 220px;
-            height: 220px;
-          }
-          
-          .orbit-3 {
-            width: 160px;
-            height: 160px;
-          }
-          
-          .tech-tag {
-            padding: 5px 10px;
-            font-size: 0.7rem;
+          .fallback-text {
+            font-size: 3rem;
           }
         }
       `}</style>

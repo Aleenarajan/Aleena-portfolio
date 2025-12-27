@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -10,6 +10,28 @@ import './App.css'
 
 function App() {
   const [activeSection, setActiveSection] = useState('home')
+  const faviconSet = useRef(false)
+
+  // Update favicon and title on component mount
+  useEffect(() => {
+    // Update document title
+    document.title = "Aleena Mariya Rajan | Portfolio";
+    
+    // Update favicon only once
+    if (!faviconSet.current) {
+      const existingLink = document.querySelector("link[rel*='icon']");
+      if (existingLink) {
+        existingLink.href = '/aleena-photo.jpg';
+      } else {
+        const link = document.createElement('link');
+        link.type = 'image/jpg';
+        link.rel = 'icon';
+        link.href = '/aleena-photo.jpg';
+        document.head.appendChild(link);
+      }
+      faviconSet.current = true;
+    }
+  }, []);
 
   // Handle scroll to update active section
   useEffect(() => {

@@ -102,7 +102,7 @@ const Contact = () => {
                     <span>GitHub</span>
                   </a>
                   <a 
-                    href="https://aleenamariya-portfolio.netlify.app" 
+                    href="https://aleenasportfolio.netlify.app/" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="social-link"
