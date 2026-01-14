@@ -21,7 +21,6 @@ const Projects = () => {
       color: '#FF6B8B',
       lightColor: '#FF6B8B30',
       github: 'https://github.com/Aleenarajan/Face_Mask_Detection',
-      date: 'Mar 2024',
       status: 'Completed',
       category: 'ai-ml',
       details: 'A computer vision application that detects whether a person is wearing a face mask in real-time using a custom CNN model trained on facial images.'
@@ -41,7 +40,6 @@ const Projects = () => {
       color: '#7C4DFF',
       lightColor: '#7C4DFF30',
       github: 'https://github.com/Aleenarajan/Image_Colorization',
-      date: 'Feb 2024',
       status: 'Completed',
       category: 'ai-ml',
       details: 'Deep learning model that automatically colorizes grayscale images using Generative Adversarial Networks (GANs), preserving realistic color distribution.'
@@ -61,7 +59,6 @@ const Projects = () => {
       color: '#00E5FF',
       lightColor: '#00E5FF30',
       github: 'https://github.com/aleenamariya/oriens-ecommerce',
-      date: 'Apr 2024',
       status: 'Completed',
       category: 'web-dev',
       details: 'Complete e-commerce solution with React frontend, Node.js backend, and MongoDB database featuring user authentication, product management, and order processing.'
@@ -81,7 +78,6 @@ const Projects = () => {
       color: '#FFD166',
       lightColor: '#FFD16630',
       github: 'https://github.com/aleenamariya/aleenamariya-portfolio',
-      date: 'Jan 2024',
       status: 'Live',
       category: 'web-dev',
       details: 'A responsive portfolio website built with React and Tailwind CSS, featuring animated sections, contact form integration, and mobile-first design.'
